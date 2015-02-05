@@ -14,10 +14,13 @@
 
 #include "BYBFileExporter.h"
 
+//3DS MAX PLUGIN 고유 아이디_3DS MAX SDK -> HELP -> GENID로 생성
 #define BYBFileExporter_CLASS_ID	Class_ID(0x66d827f4, 0x10ec7e8d)
 
 class BYBFileExporter : public SceneExport {
 public:
+	BYBExporter m_bybExporter;
+
 	//Constructor/Destructor
 	BYBFileExporter();
 	~BYBFileExporter();

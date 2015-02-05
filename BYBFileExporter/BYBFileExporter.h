@@ -37,7 +37,10 @@
 //#include <map>
 //#include <d3dx9.h>
 
-#include "Geometry.h"
+#include "BYBExporter.h"
+using namespace CSH::Model3D;
+using namespace CSH::Util;
+using CSH::Model3D::BYBExporter;
 
 //--------------------------------------------------------------------------------
 

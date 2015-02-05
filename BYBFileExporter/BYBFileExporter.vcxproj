@@ -51,6 +51,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BYBExporter.cpp" />
     <ClCompile Include="BYBFileExporter.cpp" />
     <ClCompile Include="DllEntry.cpp" />
   </ItemGroup>
@@ -60,6 +61,7 @@
   <ItemGroup>
     <ClInclude Include="3dsmaxsdk_preinclude.h" />
     <ClInclude Include="BoneIndex.h" />
+    <ClInclude Include="BYBExporter.h" />
     <ClInclude Include="BYBFileExporter.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="HeadInfo.h" />
