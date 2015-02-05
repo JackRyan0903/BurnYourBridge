@@ -52,7 +52,7 @@ void  BYBExporter::NodeGather(INode* pNode)
 
 void  BYBExporter::SetBone(Geometry* pGeom)
 {
-	INode*	pNode = pGeom->GetPointer<INode>(Geometry::P_NODE);
+	INode*	pNode = pGeom->m_pNode;
 
 	if(NULL == pNode)
 		return ;
@@ -90,7 +90,7 @@ void  BYBExporter::SetBone(Geometry* pGeom)
 
 void  BYBExporter::SetParentIndex(Geometry* pGeom)
 {
-	INode*	pNode = pGeom->GetPointer<INode>(Geometry::P_NODE);
+	INode*	pNode = pGeom->m_pNode;
 	INode*	pParent = pNode->GetParentNode();
 
 	if(pParent)
@@ -102,7 +102,7 @@ void  BYBExporter::SetGeometry(Geometry* pGeom)
 {
 	int		n;
 
-	INode*	pNode = pGeom->GetPointer<INode>(Geometry::P_NODE);
+	INode*	pNode = pGeom->m_pNode;
 
 
 	Object* pObj = pNode->EvalWorldState(0).obj;
@@ -152,19 +152,16 @@ void  BYBExporter::SetGeometry(Geometry* pGeom)
 	Matrix3	tmWSM = pNode->GetObjTMAfterWSM(0); // Skinning을 위해서 이것이 필요
 
 	// Index Vertex 생성
-	VertexIndex* indexList=new VertexIndex[nIndex];
-	pGeom->SetPointer<VertexIndex>(Geometry::P_INDEX, indexList);
-
-	VertexPosition* positionList=new VertexPosition[nVertex];
-	pGeom->SetPointer<VertexPosition>(Geometry::P_POSITION, positionList);
+	pGeom->m_indexList=new VertexIndex[nIndex];
+	pGeom->m_positionList=new VertexPosition[nVertex];
 
 
 	// 인덱스 데이터 저장
 	for (n=0; n<nIndex; ++n)
 	{
-		indexList[n].SetIndex(VertexIndex::FIRST,  pMesh->faces[n].v[0]);
-		indexList[n].SetIndex(VertexIndex::SECOND, pMesh->faces[n].v[2]);	// b <--> c 교환
-		indexList[n].SetIndex(VertexIndex::THIRD,  pMesh->faces[n].v[1]);
+		pGeom->m_indexList[n].SetIndex(VertexIndex::FIRST,  pMesh->faces[n].v[0]);
+		pGeom->m_indexList[n].SetIndex(VertexIndex::SECOND, pMesh->faces[n].v[2]);	// b <--> c 교환
+		pGeom->m_indexList[n].SetIndex(VertexIndex::THIRD,  pMesh->faces[n].v[1]);
 	}
 
 	// 정점 데이터 저장
@@ -172,9 +169,9 @@ void  BYBExporter::SetGeometry(Geometry* pGeom)
 	{
 		Point3 v = tmWSM * pMesh->verts[n];	// 변환된 정점을 사용한다.
 
-		positionList[n].SetPosition(VertexPosition::X, v.x);
-		positionList[n].SetPosition(VertexPosition::Y, v.z);//y <--> z 교환
-		positionList[n].SetPosition(VertexPosition::Z, v.y);
+		pGeom->m_positionList[n].SetPosition(VertexPosition::X, v.x);
+		pGeom->m_positionList[n].SetPosition(VertexPosition::Y, v.z);//y <--> z 교환
+		pGeom->m_positionList[n].SetPosition(VertexPosition::Z, v.y);
 	}
 }
 
@@ -197,11 +194,10 @@ void  BYBExporter::SetAnimation(Geometry* pGeom)
 	// Total Animation
 	nAni = m_head.GetFrameInfo(HeadInfo::END_FRAME) - m_head.GetFrameInfo(HeadInfo::START_FRAME) +1;
 
-	INode*	pNode = pGeom->GetPointer<INode>(Geometry::P_NODE);
+	INode*	pNode = pGeom->m_pNode;
 	pGeom->SetIntInfo(Geometry::N_ANIMATION, nAni);
 	
-	D3DXMATRIX* animationList=new D3DXMATRIX[nAni];
-	pGeom->SetPointer<D3DXMATRIX>(Geometry::P_ANIMATION, animationList);
+	pGeom->m_animationMatrix=new D3DXMATRIX[nAni];
 
 
 	D3DXMATRIX	mtPivot;
@@ -211,7 +207,7 @@ void  BYBExporter::SetAnimation(Geometry* pGeom)
 
 	for(n=0, dTime = dTimeB; dTime<=dTimeE ; dTime += dTick, ++n)
 	{
-		D3DXMATRIX* pDest = &animationList[n];
+		D3DXMATRIX* pDest = &pGeom->m_animationMatrix[n];
 
 		Matrix3 tmWorld = pNode->GetObjTMAfterWSM(dTime);
 		tmWorld.NoScale();
@@ -230,7 +226,7 @@ int   BYBExporter::BoneIDFind(INode* pNode)
 	for(int n=0; n<m_head.GetNumberOfGeometry(); ++n)
 	{
 		Geometry*	pGeom	= &m_geometry[n];
-		if(pGeom->GetPointer<INode>(Geometry::P_NODE) == pNode)
+		if(pGeom->m_pNode == pNode)
 			return n;
 	}
 
@@ -240,7 +236,7 @@ int   BYBExporter::BoneIDFind(INode* pNode)
 
 void  BYBExporter::SetBoneWeight(Geometry* pGeom)
 {
-	INode*		pNode = pGeom->GetPointer<INode>(Geometry::P_NODE);			// Current Node
+	INode*		pNode = pGeom->m_pNode;		// Current Node
 	Modifier*	pMod = NULL;
 
 
@@ -263,7 +259,7 @@ void  BYBExporter::SetBoneWeight(Geometry* pGeom)
 
 void  BYBExporter::SetPhysiqueWeight(Geometry* pGeom, Modifier* pMod)
 {
-	INode*				pNode = pGeom->GetPointer<INode>(Geometry::P_NODE);	// Current Node
+	INode*				pNode = pGeom->m_pNode;	// Current Node
 	IPhysiqueExport*	pExport = NULL;
 	IPhyContextExport*	pContext = NULL;
 
@@ -291,8 +287,7 @@ void  BYBExporter::SetPhysiqueWeight(Geometry* pGeom, Modifier* pMod)
 
 	pGeom->SetIntInfo(Geometry::N_BONE_DEPENDENT_VERTEX, nVtx);
 	
-	BoneIndex* boneIndex=new BoneIndex[nVtx];
-	pGeom->SetPointer<BoneIndex>(Geometry::P_BONE_SOURCE, boneIndex);
+	pGeom->m_boneSource=new BoneIndex[nVtx];
 
 
 	for(int j=0; j<nVtx; ++j)
@@ -313,7 +308,7 @@ void  BYBExporter::SetPhysiqueWeight(Geometry* pGeom, Modifier* pMod)
 			FLOAT	fWgt	= 1.f;		//RIGID_TYPE는 Weight=1 이다.
 
 
-			boneIndex[j].m_boneIndex.insert(std::pair<INT, FLOAT>(nBone, fWgt));
+			pGeom->m_boneSource[j].m_boneIndex.insert(std::pair<INT, FLOAT>(nBone, fWgt));
 			continue;
 		}
 
@@ -332,7 +327,7 @@ void  BYBExporter::SetPhysiqueWeight(Geometry* pGeom, Modifier* pMod)
 				continue;
 
 
-			boneIndex[j].m_boneIndex.insert(std::pair<INT, FLOAT>(nBone, fWgt));
+			pGeom->m_boneSource[j].m_boneIndex.insert(std::pair<INT, FLOAT>(nBone, fWgt));
 		}
 	}
 
@@ -344,7 +339,7 @@ void  BYBExporter::SetPhysiqueWeight(Geometry* pGeom, Modifier* pMod)
 
 void  BYBExporter::SetSkinWeight(Geometry* pGeom, Modifier* pMod)
 {
-	INode*				pNode = pGeom->GetPointer<INode>(Geometry::P_NODE);			// Current Node
+	INode*				pNode = pGeom->m_pNode;			// Current Node
 	ISkin*				pExport = NULL;
 	ISkinContextData*	pContext = NULL;
 
@@ -363,9 +358,7 @@ void  BYBExporter::SetSkinWeight(Geometry* pGeom, Modifier* pMod)
 		return;
 
 	pGeom->SetIntInfo(Geometry::N_BONE_DEPENDENT_VERTEX, nVtx);
-	BoneIndex* boneIndex = new BoneIndex[nVtx];
-
-	pGeom->SetPointer<BoneIndex>(Geometry::P_BONE_SOURCE, boneIndex);
+	pGeom->m_boneSource = new BoneIndex[nVtx];
 
 
 	for(int j=0; j<nVtx;  ++j)
@@ -387,7 +380,7 @@ void  BYBExporter::SetSkinWeight(Geometry* pGeom, Modifier* pMod)
 			if(fWgt<0.00005f)
 				continue;
 
-			boneIndex[j].m_boneIndex.insert(std::pair<INT, FLOAT>(nBone, fWgt));
+			pGeom->m_boneSource[j].m_boneIndex.insert(std::pair<INT, FLOAT>(nBone, fWgt));
 		}
 	}
 
@@ -483,7 +476,7 @@ void  BYBExporter::BinaryFileWrite()
 	{
 		Geometry* pGeom = &m_geometry[n];
 
-		fwrite(pGeom->GetPointer<TCHAR>(Geometry::NODE_NAME) ,32, sizeof(char), fp);	// Node Name
+		fwrite(pGeom->m_nodeName ,32, sizeof(char), fp);	// Node Name
 		fwrite(pGeom->GetIntInfoPointer(Geometry::NODE_TYPE), 1, sizeof(int), fp);	// Node Type
 		fwrite(pGeom->GetIntInfoPointer(Geometry::PARENT_INDEX) , 1, sizeof(int), fp);	// Parent Index
 
@@ -496,9 +489,9 @@ void  BYBExporter::BinaryFileWrite()
 			continue;
 
 		// Write Mesh
-		fwrite(pGeom->GetPointer<VertexIndex>(Geometry::P_INDEX), pGeom->GetIntInfo(Geometry::N_INDEX)
+		fwrite(pGeom->m_indexList, pGeom->GetIntInfo(Geometry::N_INDEX)
 			, sizeof(VertexIndex), fp);
-		fwrite(pGeom->GetPointer<VertexPosition>(Geometry::P_POSITION), pGeom->GetIntInfo(Geometry::N_POSITION)
+		fwrite(pGeom->m_positionList, pGeom->GetIntInfo(Geometry::N_POSITION)
 			, sizeof(VertexPosition), fp);
 	}
 
@@ -510,7 +503,7 @@ void  BYBExporter::BinaryFileWrite()
 		if(1>pGeom->GetIntInfo(Geometry::N_ANIMATION))
 			continue;
 
-		fwrite(pGeom->GetPointer<D3DXMATRIX>(Geometry::P_ANIMATION), pGeom->GetIntInfo(Geometry::N_ANIMATION)
+		fwrite(pGeom->m_animationMatrix, pGeom->GetIntInfo(Geometry::N_ANIMATION)
 			, sizeof(D3DXMATRIX), fp);	// Animation Matrix
 	}
 
@@ -528,7 +521,7 @@ void  BYBExporter::BinaryFileWrite()
 
 		for(j=0; j<pGeom->GetIntInfo(Geometry::N_POSITION); ++j)
 		{
-			BoneIndex*	pBlnd = &pGeom->GetPointer<BoneIndex>(Geometry::P_BONE_SOURCE)[j];//>pBlnd[j];
+			BoneIndex*	pBlnd = &pGeom->m_boneSource[j];//>pBlnd[j];
 			INT			iBone = pBlnd->m_boneIndex.size();
 
 			fwrite(&iBone, sizeof(int), 1, fp);
@@ -570,14 +563,13 @@ void  BYBExporter::TextFileWrite()
 	for(n =0; n<m_head.GetNumberOfGeometry(); ++n)
 	{
 		Geometry* pGeom = &m_geometry[n];
-		INode* temp=(pGeom->GetPointer<INode>(Geometry::P_NODE));
-		INode* pPrn = temp->GetParentNode();
+		INode* pPrn = pGeom->m_pNode->GetParentNode();
 
 		fprintf(fp, "Node: %2d (\"%s\")"
 			" Type: %d"
 			" Parent: %d"
 			, n
-			, pGeom->GetPointer<TCHAR>(Geometry::NODE_NAME)
+			, pGeom->m_nodeName
 			, pGeom->GetIntInfo(Geometry::NODE_TYPE)
 			, pGeom->GetIntInfo(Geometry::PARENT_INDEX)
 			);
@@ -605,9 +597,9 @@ void  BYBExporter::TextFileWrite()
 		for (j=0; j<pGeom->GetIntInfo(Geometry::N_INDEX); ++j)
 		{
 			int a, b, c;
-			a= pGeom->GetPointer<VertexIndex>(Geometry::P_INDEX)[j].a;
-			b= pGeom->GetPointer<VertexIndex>(Geometry::P_INDEX)[j].b;
-			c= pGeom->GetPointer<VertexIndex>(Geometry::P_INDEX)[j].c;
+			a= pGeom->m_indexList[j].GetIndex(VertexIndex::FIRST);
+			b= pGeom->m_indexList[j].GetIndex(VertexIndex::SECOND);
+			c= pGeom->m_indexList[j].GetIndex(VertexIndex::THIRD);
 
 			fprintf(fp, "	%4d		%4d %4d %4d\n", j, a, b, c);
 		}
@@ -621,9 +613,9 @@ void  BYBExporter::TextFileWrite()
 		for (j=0; j<pGeom->GetIntInfo(Geometry::N_POSITION); ++j)
 		{
 			float x, y, z;
-			x = pGeom->GetPointer<VertexPosition>(Geometry::P_POSITION)[j].x;
-			y = pGeom->GetPointer<VertexPosition>(Geometry::P_POSITION)[j].y;
-			z = pGeom->GetPointer<VertexPosition>(Geometry::P_POSITION)[j].z;
+			x = pGeom->m_positionList[j].GetPosition(VertexPosition::X);
+			y = pGeom->m_positionList[j].GetPosition(VertexPosition::Y);
+			z = pGeom->m_positionList[j].GetPosition(VertexPosition::Z);
 
 			fprintf(fp, "	%4d		%10.5f %10.5f %10.5f\n", j, x, y, z);
 		}
@@ -637,17 +629,17 @@ void  BYBExporter::TextFileWrite()
 	for(n =0; n<m_head.GetNumberOfGeometry(); ++n)
 	{
 		Geometry* pGeom = &m_geometry[n];
-		INode* temp = pGeom->GetPointer<INode>(Geometry::P_NODE);
+		INode* temp = pGeom->m_pNode;
 		INode* pPrn = temp->GetParentNode();
 
 		if(1>pGeom->GetIntInfo(Geometry::N_ANIMATION))
 			continue;
 
-		fprintf(fp, "Animation: %2d (\"%s\") {\n", n, pGeom->GetPointer<TCHAR>(Geometry::NODE_NAME));
+		fprintf(fp, "Animation: %2d (\"%s\") {\n", n, pGeom->m_nodeName);
 
 		for (j=0; j<pGeom->GetIntInfo(Geometry::N_ANIMATION); ++j)
 		{
-			D3DXMATRIX* pTM = &pGeom->GetPointer<D3DXMATRIX>(Geometry::P_ANIMATION)[j];
+			D3DXMATRIX* pTM = &pGeom->m_animationMatrix[j];
 			fprintf(fp, "	%2d ", j);
 			fprintf(fp, " %9.5f %9.5f %9.5f %9.5f", pTM->_11, pTM->_12, pTM->_13, pTM->_14);
 			fprintf(fp, " %9.5f %9.5f %9.5f %9.5f", pTM->_21, pTM->_22, pTM->_23, pTM->_24);
@@ -665,14 +657,14 @@ void  BYBExporter::TextFileWrite()
 	{
 		Geometry*	pGeom = &m_geometry[n];
 
-		if(!pGeom->GetPointer<BoneIndex>(Geometry::P_BONE_SOURCE))
+		if(!pGeom->m_boneSource)
 			continue;
 
-		fprintf(fp, "Blend: %2d (\"%s\") {\n", n, pGeom->GetPointer<TCHAR>(Geometry::NODE_NAME));
+		fprintf(fp, "Blend: %2d (\"%s\") {\n", n, pGeom->m_nodeName);
 
 		for(j=0; j<pGeom->GetIntInfo(Geometry::N_POSITION); ++j)
 		{
-			BoneIndex*	pBlnd = &pGeom->GetPointer<BoneIndex>(Geometry::P_BONE_SOURCE)[j];
+			BoneIndex*	pBlnd = &pGeom->m_boneSource[j];
 			INT			iBone = pBlnd->m_boneIndex.size();
 
 			fprintf(fp, "	%4d %2d : ", j, iBone);

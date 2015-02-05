@@ -31,9 +31,9 @@ namespace CSH
 		public:
 			enum {NODE_NAME_LENGTH=32, NOT_EXIST=-1};
 			enum {NODE_TYPE, PARENT_INDEX, N_INDEX, N_POSITION, N_BONE_DEPENDENT_VERTEX, N_ANIMATION};
-			enum {NODE_NAME, P_NODE, P_INDEX, P_POSITION, P_BONE_SOURCE, P_ANIMATION};
+			//enum {NODE_NAME, P_NODE, P_INDEX, P_POSITION, P_BONE_SOURCE, P_ANIMATION};
 
-		private:
+		public:
 			TCHAR				m_nodeName[NODE_NAME_LENGTH];//맥스 노드 이름
 			int					m_intInfo[6];//int 타입을 갖는 정보들 위 열거형 중 2번째(NODE_TYPE ~)
 
@@ -82,55 +82,56 @@ namespace CSH
 				m_intInfo[index]=value;
 			}
 
-			template <typename T>
-			auto* GetPointer(int index) ->decltype(T)
-			{
-				switch(index)
-				{
-				case NODE_NAME:
-					return m_nodeName;
+			//template <typename T>
+			//T& GetPointer(int index)
+			//{
+			//	switch(index)
+			//	{
+			//	case NODE_NAME:
+			//		return m_nodeName;
 
-				case P_NODE:
-					return m_pNode;
+			//	case P_NODE:
+			//		return m_pNode;
 
-				case P_INDEX:
-					return m_indexList;
+			//	case P_INDEX:
+			//		return m_indexList;
 
-				case P_POSITION:
-					return m_positionList;
+			//	case P_POSITION:
+			//		return m_positionList;
 
-				case P_BONE_SOURCE:
-					return m_boneSource;
+			//	case P_BONE_SOURCE:
+			//		return m_boneSource;
 
-				case P_ANIMATION:
-					return m_animationMatrix;
-				}
-			}
+			//	case P_ANIMATION:
+			//		return m_animationMatrix;
+			//	}
+			//}
 
-			template <typename T>
-			void SetPointer(int index, T* ptr)
-			{
-				switch(index)
-				{
-				case NODE_NAME:
-					m_nodeName=ptr;
+			//template <typename T>
+			//void SetPointer(int index, T* ptr)
+			//{
+			//	switch(index)
+			//	{
+			//	case NODE_NAME:
+			//		_stprintf(m_nodeName, ptr);
+			//		//m_nodeName=ptr;
 
-				case P_NODE:
-					m_pNode=ptr;
+			//	case P_NODE:
+			//		m_pNode=ptr;
 
-				case P_INDEX:
-					m_indexList=ptr;
+			//	case P_INDEX:
+			//		m_indexList=ptr;
 
-				case P_POSITION:
-					m_positionList=ptr;
+			//	case P_POSITION:
+			//		m_positionList=ptr;
 
-				case P_BONE_SOURCE:
-					m_boneSource=ptr;
+			//	case P_BONE_SOURCE:
+			//		m_boneSource=ptr;
 
-				case P_ANIMATION:
-					m_animationMatrix=ptr;
-				}
-			}
+			//	case P_ANIMATION:
+			//		m_animationMatrix=ptr;
+			//	}
+			//}
 
 		};
 

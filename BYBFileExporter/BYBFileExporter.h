@@ -45,7 +45,7 @@ using CSH::Model3D::BYBExporter;
 //--------------------------------------------------------------------------------
 
 
-
+#pragma warning (disable:c4482)
 
 extern TCHAR *GetString(int id);
 

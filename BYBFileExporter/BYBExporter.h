@@ -24,7 +24,7 @@ namespace CSH
 		public:
 
 
-		private:
+		public:
 			bool					m_doExport;
 			ExpInterface*			m_expInterface;
 			Interface*				m_interface;

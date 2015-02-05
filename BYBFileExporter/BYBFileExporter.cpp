@@ -68,8 +68,11 @@ ClassDesc2* GetBYBFileExporterDesc() {
 
 
 
-INT_PTR CALLBACK BYBFileExporterOptionsDlgProc(HWND hWnd,UINT message,WPARAM,LPARAM lParam) {
+INT_PTR CALLBACK BYBFileExporterOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam) {
 	static BYBFileExporter* imp = nullptr;
+
+	WPARAM wLoParam = LOWORD(wParam);
+	WPARAM wHiParam = HIWORD(wParam);
 
 	switch(message) {
 		case WM_INITDIALOG:
@@ -80,6 +83,15 @@ INT_PTR CALLBACK BYBFileExporterOptionsDlgProc(HWND hWnd,UINT message,WPARAM,LPA
 		case WM_CLOSE:
 			EndDialog(hWnd, 0);
 			return 1;
+
+		case WM_COMMAND:
+			if(imp && IDC_EXPORT_BUTTON == wLoParam)
+			{
+				imp->m_bybExporter.m_doExport = true;
+				SendMessage(hWnd, WM_CLOSE, 0, 0);
+			}
+
+		return true;
 	}
 	return 0;
 }
@@ -162,18 +174,149 @@ BOOL BYBFileExporter::SupportsOptions(int /*ext*/, DWORD /*options*/)
 }
 
 
-int	BYBFileExporter::DoExport(const TCHAR* /*name*/, ExpInterface* /*ei*/, Interface* /*ip*/, BOOL suppressPrompts, DWORD /*options*/)
+int	BYBFileExporter::DoExport(const TCHAR *sFile,ExpInterface *ei,Interface *pi, BOOL suppressPrompts, DWORD options)
 {
-	//#pragma message(TODO("Implement the actual file Export here and"))
-
 	if(!suppressPrompts)
 		DialogBoxParam(hInstance, 
 				MAKEINTRESOURCE(IDD_PANEL), 
 				GetActiveWindow(), 
 				BYBFileExporterOptionsDlgProc, (LPARAM)this);
 
-	#pragma message(TODO("return TRUE If the file is exported properly"))
-	return FALSE;
+
+	if(FALSE == m_bybExporter.m_doExport)
+		return FALSE;
+
+	int		n = 0;
+	int		i =0;
+
+
+	m_bybExporter.m_expInterface	= ei;
+	m_bybExporter.m_interface		= pi;
+	m_bybExporter.m_suppressPrompt	= suppressPrompts;
+	m_bybExporter.m_options			= options;
+
+
+	// 0. Prepare: 파일 이름 설정
+	memset(m_bybExporter.m_binaryFileName, 0, sizeof(m_bybExporter.m_binaryFileName));	// Export Binary File Name
+	memset(m_bybExporter.m_textFileName, 0, sizeof(m_bybExporter.m_textFileName));	// Export Text File Name
+	_tcscpy(m_bybExporter.m_binaryFileName, sFile);
+
+
+	// 파일이름 소문자 전환
+	TCHAR *s = (TCHAR*)sFile;
+	TCHAR *e = (TCHAR*)sFile;
+	TCHAR *d = (TCHAR*)m_bybExporter.m_binaryFileName;
+
+	e+= _tcslen( m_bybExporter.m_binaryFileName );
+	for( ; s<e; ++s, ++d)
+		*d = tolower(*s);
+
+
+	// 0. 파일 이름 설정
+	m_bybExporter.FileRename(m_bybExporter.m_textFileName, m_bybExporter.m_binaryFileName, NULL, _T("bybt"));
+
+
+
+	// 0. 헤더의 정보를 모은다.
+	int		 iTick = GetTicksPerFrame();
+	Interval range = m_bybExporter.m_interface->GetAnimRange();
+
+	m_bybExporter.m_head.SetFrameInfo(HeadInfo::START_FRAME, range.Start() / iTick);
+	m_bybExporter.m_head.SetFrameInfo(HeadInfo::END_FRAME, range.End() / iTick);
+	m_bybExporter.m_head.SetFrameInfo(HeadInfo::FRAME_RATE, GetFrameRate());
+	m_bybExporter.m_head.SetFrameInfo(HeadInfo::TICK_FRAME, iTick);
+
+
+
+
+	// 1. Gather Node
+	INode*	pRoot = m_bybExporter.m_interface->GetRootNode();
+	m_bybExporter.NodeGather(pRoot);
+
+
+	// 2. Create Geometry
+	m_bybExporter.m_head.SetNumberOfGeometry(m_bybExporter.m_maxNode.size());
+	if(m_bybExporter.m_head.GetNumberOfGeometry()<1)
+		return -1;
+
+	int nGeom=m_bybExporter.m_head.GetNumberOfGeometry();
+
+	//m_pI->ProgressStart(_T("Exporting Acm File..."), TRUE, fn, NULL);
+	m_bybExporter.m_geometry=new Geometry[m_bybExporter.m_head.GetNumberOfGeometry()];
+
+
+	// 3. Binding Bone to LcGeo
+	for(n =0; n<nGeom; ++n)
+	{
+		Geometry*	pGeom = &m_bybExporter.m_geometry[n];
+		INode*	pNode = m_bybExporter.m_maxNode[n];
+		pGeom->m_pNode=pNode;
+
+		TCHAR*	sName  = (TCHAR*)pNode->GetName();
+		_stprintf(pGeom->m_nodeName, sName);
+	}
+
+
+	//m_pI->ProgressUpdate(2, TRUE, _T("Prepare"));
+
+	// 4. Bone or Not
+	for(n =0; n<nGeom; ++n)
+	{
+		Geometry*	pGeom = &m_bybExporter.m_geometry[n];
+		m_bybExporter.SetBone(pGeom);
+	}
+
+
+	// 5. Setup Parent Index
+	for(n =0; n<nGeom; ++n)
+	{
+		Geometry*	pGeom = &m_bybExporter.m_geometry[n];
+		m_bybExporter.SetParentIndex(pGeom);
+	}
+
+
+	// 6. Physique or Skinning을 설정한다.
+	for(i=0; i<nGeom; ++i)
+	{
+		Geometry*	pGeom	= &m_bybExporter.m_geometry[i];
+		m_bybExporter.SetBoneWeight(pGeom);
+	}
+
+
+	//m_pI->ProgressUpdate(4, TRUE, _T("Setup Mesh"));
+
+	// 7. Setup Geometry
+	for(n =0; n<nGeom; ++n)
+	{
+		Geometry*	pGeom = &m_bybExporter.m_geometry[n];
+		m_bybExporter.SetGeometry(pGeom);
+	}
+
+
+
+	// 8. Setup Animation
+	for(n =0; n<nGeom; ++n)
+	{
+		//m_pI->ProgressUpdate(6 + int(float(n*92)/m_Header.nGeo), TRUE, _T("Setup Animation"));
+
+		Geometry*	pGeom = &m_bybExporter.m_geometry[n];
+		m_bybExporter.SetAnimation(pGeom);
+	}
+
+
+	//m_pI->ProgressUpdate(99, TRUE, _T("Write Files"));
+
+	// 9. 파일 출력
+	m_bybExporter.BinaryFileWrite();
+	m_bybExporter.TextFileWrite();
+
+
+	SafeDeleteArray(m_bybExporter.m_geometry);
+	m_bybExporter.m_doExport=false;
+
+	//m_pI->ProgressEnd();
+
+	return TRUE;
 }
 
 
