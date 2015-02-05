@@ -44,18 +44,7 @@ using CSH::Model3D::BYBExporter;
 
 //--------------------------------------------------------------------------------
 
-//--------------------------------------------------------------------------------
-/* Physique 및 Skin 관련 필요 정의 부분 */
 
-//3DS MAX Physique 관련 
-#define PHYSQ_CLASSID Class_ID(PHYSIQUE_CLASS_ID_A, PHYSIQUE_CLASS_ID_B)
-
-//3DS MAX Skin 관련, iskin.h에 이미 정의되어 있다.
-//9815843,87654는 iskin.h에 정의된 Class_ID 값
-#ifndef SKIN_CLASSID
-#define SKIN_CLASSID Class_ID(9815843,87654)
-#endif
-//--------------------------------------------------------------------------------
 
 
 extern TCHAR *GetString(int id);

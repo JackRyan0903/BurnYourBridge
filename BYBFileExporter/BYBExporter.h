@@ -2,6 +2,19 @@
 
 #include "Geometry.h"
 
+//--------------------------------------------------------------------------------
+/* Physique 및 Skin 관련 필요 정의 부분 */
+
+//3DS MAX Physique 관련 
+#define PHYSQ_CLASSID Class_ID(PHYSIQUE_CLASS_ID_A, PHYSIQUE_CLASS_ID_B)
+
+//3DS MAX Skin 관련, iskin.h에 이미 정의되어 있다.
+//9815843,87654는 iskin.h에 정의된 Class_ID 값
+#ifndef SKIN_CLASSID
+#define SKIN_CLASSID Class_ID(9815843,87654)
+#endif
+//--------------------------------------------------------------------------------
+
 namespace CSH
 {
 	namespace Model3D
@@ -28,6 +41,7 @@ namespace CSH
 
 		public://3ds max 정보 추출 관련
 			void  NodeGather(INode* pNode);
+			void  SetBone(Geometry* pGeom);
 			void  SetParentIndex(Geometry* pGeom);
 			void  SetGeometry(Geometry* pGeom);
 			void  SetAnimation(Geometry* pGeom);

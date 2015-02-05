@@ -34,14 +34,14 @@ namespace CSH
 			enum {NODE_NAME, P_NODE, P_INDEX, P_POSITION, P_BONE_SOURCE, P_ANIMATION};
 
 		private:
-			TCHAR m_nodeName[NODE_NAME_LENGTH];//맥스 노드 이름
-			int m_intInfo[6];//int 타입을 갖는 정보들 위 열거형 중 2번째(NODE_TYPE ~)
+			TCHAR				m_nodeName[NODE_NAME_LENGTH];//맥스 노드 이름
+			int					m_intInfo[6];//int 타입을 갖는 정보들 위 열거형 중 2번째(NODE_TYPE ~)
 
-			INode* m_pNode;
-			VertexIndex* m_indexList;
-			VertexPosition* m_positionList;
-			BoneIndex* m_boneSource;
-			D3DXMATRIX* m_animationMatrix;
+			INode*				m_pNode;
+			VertexIndex*		m_indexList;
+			VertexPosition*		m_positionList;
+			BoneIndex*			m_boneSource;
+			D3DXMATRIX*			m_animationMatrix;
 
 		public:
 			Geometry()
@@ -72,13 +72,18 @@ namespace CSH
 				return m_intInfo[index];
 			}
 
+			int* GetIntInfoPointer(int index)
+			{
+				return &m_intInfo[index];
+			}
+
 			void SetIntInfo(int index, int value)
 			{
 				m_intInfo[index]=value;
 			}
 
 			template <typename T>
-			T* GetPointer(int index)
+			auto* GetPointer(int index) ->decltype(T)
 			{
 				switch(index)
 				{
