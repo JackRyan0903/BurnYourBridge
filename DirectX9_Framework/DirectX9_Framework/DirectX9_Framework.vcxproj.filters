@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Main">
+      <UniqueIdentifier>{15aa1cd3-10a0-44e3-9a69-a0446b25f8b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameInfo_Loader">
+      <UniqueIdentifier>{6c15da92-3b2a-4333-80a6-d7a04650c1e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameInfo_Loader\TinyXML">
+      <UniqueIdentifier>{ffa7e479-0d49-4bdc-9253-d51d556d37a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Unknown">
+      <UniqueIdentifier>{389b4987-9421-437a-9b20-c21cd8080ca3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Precompile">
+      <UniqueIdentifier>{019ca566-7da2-4606-81f2-7f8cf72ca99b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{1e099e41-7c82-4c56-a89a-baa9349dc6d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\XML">
+      <UniqueIdentifier>{0cde15c1-d3f9-423b-8db9-8d5bef17a036}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SystemClass">
+      <UniqueIdentifier>{4fe951fc-72c6-42d8-a345-315bd10a62c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SystemClass\Graphics">
+      <UniqueIdentifier>{83cd056e-384e-4696-90c9-91f612316d48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SystemClass\Tools">
+      <UniqueIdentifier>{2adb1d0e-9e65-402b-9f45-4be16a8fef56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SystemClass\Tools\Timer">
+      <UniqueIdentifier>{5b85ebe5-0774-4e2d-ab3a-7c8a40a2cd4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SystemClass\Tools\CPU">
+      <UniqueIdentifier>{6a178293-c691-4887-97d1-3c96d9ae9f92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SystemClass\Tools\FPS">
+      <UniqueIdentifier>{de1b60d4-19dd-40b7-b79c-0e58894c19ea}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="TinyXML\tinystr.cpp">
+      <Filter>GameInfo_Loader\TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyXML\tinyxml.cpp">
+      <Filter>GameInfo_Loader\TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyXML\tinyxmlerror.cpp">
+      <Filter>GameInfo_Loader\TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyXML\tinyxmlparser.cpp">
+      <Filter>GameInfo_Loader\TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="WinMain.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="GameInfo_Loader.cpp">
+      <Filter>GameInfo_Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D_Main.cpp">
+      <Filter>Unknown</Filter>
+    </ClCompile>
+    <ClCompile Include="SystemClass.cpp">
+      <Filter>SystemClass</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics.cpp">
+      <Filter>SystemClass\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D_Font.cpp">
+      <Filter>Unknown</Filter>
+    </ClCompile>
+    <ClCompile Include="FPS.cpp">
+      <Filter>SystemClass\Tools\FPS</Filter>
+    </ClCompile>
+    <ClCompile Include="CPU.cpp">
+      <Filter>SystemClass\Tools\CPU</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>SystemClass\Tools\Timer</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="TinyXML\tinyxml.h">
+      <Filter>GameInfo_Loader\TinyXML</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyXML\tinystr.h">
+      <Filter>GameInfo_Loader\TinyXML</Filter>
+    </ClInclude>
+    <ClInclude Include="GameInfo_Loader.h">
+      <Filter>GameInfo_Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D_Manager.h">
+      <Filter>Unknown</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Precompile</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugConsole.h">
+      <Filter>Precompile</Filter>
+    </ClInclude>
+    <ClInclude Include="DesignPattern.h">
+      <Filter>Precompile</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemClass.h">
+      <Filter>SystemClass</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D_Main.h">
+      <Filter>Unknown</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics.h">
+      <Filter>SystemClass\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D_Font.h">
+      <Filter>Unknown</Filter>
+    </ClInclude>
+    <ClInclude Include="FPS.h">
+      <Filter>SystemClass\Tools\FPS</Filter>
+    </ClInclude>
+    <ClInclude Include="CPU.h">
+      <Filter>SystemClass\Tools\CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>SystemClass\Tools\Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="Define.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="Resources\XML\GameInfo.xml">
+      <Filter>Resources\XML</Filter>
+    </Xml>
+  </ItemGroup>
+</Project>

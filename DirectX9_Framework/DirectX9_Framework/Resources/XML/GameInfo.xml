@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<GameInfo>
+    <Name>Burn Your Bridge</Name>
+    <LatestReleasingTime>2015-2-8 22:19:16</LatestReleasingTime>
+    <LatestDebugingTime>2015-2-13 20:59:35</LatestDebugingTime>
+    <Windows>
+        <window_4-to-3 screen_size_X="800" screen_size_Y="600" />
+        <window_5-to-5 screen_size_X="800" screen_size_Y="800" />
+    </Windows>
+</GameInfo>
