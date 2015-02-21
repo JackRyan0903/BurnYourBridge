@@ -64,7 +64,7 @@ void CGameInfo_Loader::loadWindowAppName(wchar_t *wcsAppName)
     }
 }
 
-void CGameInfo_Loader::loadWindowSize(const std::string &windowType, Window::stWinInfo *winInfo)
+void CGameInfo_Loader::loadWindowSize(const std::string &windowType, Window::shrdWININFO winInfo)
 {
     // XML 핸들 객체
     TiXmlDocument *cpTinyDoc = nullptr;
@@ -78,8 +78,8 @@ void CGameInfo_Loader::loadWindowSize(const std::string &windowType, Window::stW
 	if (0 == windowType.compare("FULL SCREEN")){
 		
 		winInfo->bIsFullScreen = true;
-		winInfo->iScreenSize_X = 0;
-		winInfo->iScreenSize_Y = 0;
+		winInfo->iScreenSize_X = GetSystemMetrics(SM_CXSCREEN);
+		winInfo->iScreenSize_Y = GetSystemMetrics(SM_CYSCREEN);
 
 	}
 	else{
@@ -109,6 +109,140 @@ void CGameInfo_Loader::loadWindowSize(const std::string &windowType, Window::stW
 	}
     
 }
+
+
+void CGameInfo_Loader::loadSpriteInfo(const Window::shrdWININFO &winInfo, Resources::VecSpriteInfo &vecSpriteInfo)
+{
+
+	std::string strType("");
+	std::string strSpriteName("");
+	std::string strFileName("");
+	std::string strX("");
+	std::string strY("");
+	
+	float fPosX = 0.0f;
+	float fPosY = 0.0f;
+	int iWidth = 0;
+	int iHeight = 0;
+
+	// XML 핸들 객체
+	TiXmlDocument *cpTinyDoc = nullptr;
+
+	TiXmlElement *eleSprites = nullptr;
+	TiXmlElement *eleSpriteInfo = nullptr;
+
+	TiXmlAttribute *pAttribute = nullptr;
+
+	// 에러코드를 저장할 객체
+	std::stringstream errCode;
+
+	cpTinyDoc = _openDocument();
+
+	eleSprites = cpTinyDoc->RootElement()->FirstChildElement("Resources")->FirstChildElement("Sprites");
+
+	// 엘레먼트를 찾지 못한다면 XML파일이 손상 되거나 잘못되었다는 말이므로 런타임 에러 throw
+	if (nullptr == eleSprites){
+
+		errCode << "Runtime Error Occur !!!(XML File Get Damaged -> Can't Find Element<Sprites>";
+		throw std::runtime_error(errCode.str());
+
+	}
+
+	eleSpriteInfo = eleSprites->FirstChildElement();
+
+
+	while (eleSpriteInfo){
+	
+		pAttribute = eleSpriteInfo->FirstAttribute();		
+		if (!pAttribute){
+
+			errCode << "Sprite's info is inaccurate, Check " << PATH_XML::GAME_INFO << " File.";
+			throw std::runtime_error(errCode.str());
+
+		}
+
+		strType = pAttribute->Value();
+		pAttribute = _moveNextAttribute(pAttribute);		
+
+		strSpriteName = pAttribute->Value();
+		pAttribute = _moveNextAttribute(pAttribute);
+
+		strFileName = pAttribute->Value();
+		pAttribute = _moveNextAttribute(pAttribute);
+
+		strX = pAttribute->Value();
+		if ("left" != strX && "mid" != strX && "right" != strX)
+		{
+
+			fPosX = (float)pAttribute->DoubleValue();
+			pAttribute = _moveNextAttribute(pAttribute);
+
+		}
+		else{
+
+			pAttribute = _moveNextAttribute(pAttribute);
+
+		}
+		
+		strY = pAttribute->Value();
+		if ("top" != strY && "mid" != strY && "bottom" != strY)
+		{
+
+			fPosY = (float)pAttribute->DoubleValue();
+			pAttribute = _moveNextAttribute(pAttribute);
+
+		}			
+		else{
+		
+			pAttribute = _moveNextAttribute(pAttribute);
+
+		}
+
+		iWidth = pAttribute->IntValue();
+		pAttribute = _moveNextAttribute(pAttribute);
+
+		iHeight = pAttribute->IntValue();		
+
+
+		if ("left" == strX){
+
+			fPosX = 0;
+
+		}
+		else if ("mid" == strX){
+
+			fPosX = ((winInfo->iScreenSize_X) / 2) - (iWidth / 2);
+
+		}
+		else if ("right" == strX){
+
+			fPosX = winInfo->iScreenSize_X - iWidth;
+		
+		}
+
+		if ("top" == strY){
+
+			fPosY = 0;
+
+		}
+		else if ("mid" == strY){
+
+			fPosY = ((winInfo->iScreenSize_Y) / 2) - (iHeight / 2);
+
+		}
+		else if ("bottom" == strY){
+
+			fPosY = winInfo->iScreenSize_Y - iHeight;
+
+		}
+
+		vecSpriteInfo.push_back(new Resources::CSpriteInfo(strType, strSpriteName, strFileName, fPosX, fPosY, iWidth, iHeight));
+
+		eleSpriteInfo = eleSpriteInfo->NextSiblingElement();
+	}
+
+}
+
 
 TiXmlDocument* CGameInfo_Loader::_openDocument(void)
 {
@@ -221,3 +355,19 @@ void CGameInfo_Loader::_saveLatestReleasingTime(const SYSTEMTIME &systemTime)
 }
 
 
+TiXmlAttribute* CGameInfo_Loader::_moveNextAttribute(TiXmlAttribute* pAttribute)
+{
+
+	std::stringstream errCode;
+
+	pAttribute = pAttribute->Next();
+	if (!pAttribute){
+
+		errCode << "Sprite's info is inaccurate, Check " << PATH_XML::GAME_INFO << " File.";
+		throw std::runtime_error(errCode.str());
+
+	}
+
+	return pAttribute;
+
+}

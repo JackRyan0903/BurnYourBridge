@@ -45,7 +45,7 @@ public:
 	//		1. const std::shared_ptr<Window::stWinInfo> & : Window 정보를 가지고 있는 구조체.
 	//			※ 여기서 구조체 내의 변수들은 반드시 유효한 값을 가지고 있어야 함.
 	//================================================================================//
-	void initialize(const shrdWININFO &winInfo);
+	void initialize(const Window::shrdWININFO &winInfo);
 
 	//================================================================================//
 	//  @멤버 함수
@@ -125,7 +125,7 @@ private:
 	//  @설명 : Window Class 구조체를 직접 초기화 해주는 함수.
 	//	@매개변수 : 위에 내용과 동일하므로 주석 생략
 	//================================================================================//
-	void initializeWindows(const shrdWININFO &winInfo);
+	void initializeWindows(const Window::shrdWININFO &winInfo);
 
 	//================================================================================//
 	//  @멤버 함수

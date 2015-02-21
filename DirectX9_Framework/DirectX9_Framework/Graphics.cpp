@@ -9,24 +9,28 @@
 
 #include "Graphics.h"
 
+#include "Sprite_UI.h"
 
 void CGraphics::render(const int &iFPS, const int &iCPU, const float &fFrameTime) const
 {	
 
 	m_cpD3DMain->beginScene();
 
+	m_cpD3DSpriteMgr->render();
+
+
 #ifdef _DEBUG
-	m_cpD3DFont->drawText(0, 0, 10, 20, "FPS : ", iFPS);
-	m_cpD3DFont->drawText(0, 20, 10, 40, "CPU : ", iCPU, "%");
-	m_cpD3DFont->drawText(0, 40, 10, 60, "FrameTime : ", fFrameTime);
-#endif
+	m_cpD3DFont->drawText(100, 100, 10, 20, "FPS : ", iFPS);
+	m_cpD3DFont->drawText(100, 120, 10, 40, "CPU : ", iCPU, "%");
+	m_cpD3DFont->drawText(100, 140, 10, 60, "FrameTime : ", fFrameTime);
+#endif	
 
 	m_cpD3DMain->endScene();
 
 }
 
 
-void CGraphics::initialize(HWND &hWnd, const shrdWININFO &winInfo)
+void CGraphics::initialize(HWND &hWnd, const Window::shrdWININFO &winInfo)
 {
 
 	m_cpD3DMain = CD3D_Main::getInstancePtr();
@@ -36,6 +40,10 @@ void CGraphics::initialize(HWND &hWnd, const shrdWININFO &winInfo)
 	m_cpD3DFont = CD3D_Font::getInstancePtr();
 
 	m_cpD3DFont->initialize(m_cpD3DMain->getD3DDevicePtr());
+
+	m_cpD3DSpriteMgr = CD3D_SpriteManager::getInstancePtr();
+
+	m_cpD3DSpriteMgr->initialize(m_cpD3DMain->getD3DDevicePtr());
 
 }
 

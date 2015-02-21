@@ -135,6 +135,7 @@ void CD3D_Main::endScene(void)
 
 void CD3D_Main::deinitialize(void)
 {
+
 	if (m_hD3DDevice){
 
 		m_hD3DDevice->Release();
@@ -146,4 +147,5 @@ void CD3D_Main::deinitialize(void)
 		m_hD3D->Release();
 		m_hD3D = nullptr;
 	}
+
 }

@@ -11,6 +11,8 @@
 #include "DesignPattern.h"
 #include "D3D_Main.h"
 #include "D3D_Font.h"
+#include "D3D_SpriteManager.h"
+
 
 
 //================================================================================//
@@ -33,7 +35,7 @@ public:
 	//		1. HWND : 메인 윈도우의 핸들 값.
 	//		2. shrdWININFO : 윈도우 정보를 가지고 있는 구조체.
 	//================================================================================//
-	void initialize(HWND &hWnd, const shrdWININFO &winInfo);
+	void initialize(HWND &hWnd, const Window::shrdWININFO &winInfo);
 
 
 	//================================================================================//
@@ -89,6 +91,7 @@ private:
 private:
 	CD3D_Main *m_cpD3DMain;
 	CD3D_Font *m_cpD3DFont;
+	CD3D_SpriteManager *m_cpD3DSpriteMgr;
 
 };
 

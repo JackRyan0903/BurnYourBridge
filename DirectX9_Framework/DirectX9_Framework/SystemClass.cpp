@@ -25,7 +25,7 @@ bool CSystemClass::update(void)
 }
 
 
-void CSystemClass::initialize(const shrdWININFO &winInfo)
+void CSystemClass::initialize(const Window::shrdWININFO &winInfo)
 {
 	// 윈도우 초기화
     initializeWindows(winInfo);
@@ -136,7 +136,7 @@ LRESULT CALLBACK CSystemClass::MessageHandler(HWND hWnd, UINT message, WPARAM wP
 
 }
 
-void CSystemClass::initializeWindows(const shrdWININFO &winInfo)
+void CSystemClass::initializeWindows(const Window::shrdWININFO &winInfo)
 {
 	// winInfo로부터 포인터를 받아와 멤버 변수에 주소 값을 저장함.
 	m_pWinInfo = winInfo.get();

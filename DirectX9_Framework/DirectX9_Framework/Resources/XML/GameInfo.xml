@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <GameInfo>
     <Name>Burn Your Bridge</Name>
-    <LatestReleasingTime>2015-2-8 22:19:16</LatestReleasingTime>
-    <LatestDebugingTime>2015-2-13 20:59:35</LatestDebugingTime>
+    <LatestReleasingTime>2015-2-19 6:30:52</LatestReleasingTime>
+    <LatestDebugingTime>2015-2-21 1:28:42</LatestDebugingTime>
     <Windows>
         <window_4-to-3 screen_size_X="800" screen_size_Y="600" />
         <window_5-to-5 screen_size_X="800" screen_size_Y="800" />
     </Windows>
+    <Resources>
+        <Sprites>
+            <testUI Type="UI" spriteName="Minimap" fileName="Resources\Sprites\UI\UI_MiniMap.png" posX="right" posY="bottom" width="412" height="410" />
+            <testUI Type="UI" spriteName="Test" fileName="Resources\Sprites\UI\UI_Test.png" posX="left" posY="top" width="371" height="373" />
+        </Sprites>
+    </Resources>
 </GameInfo>

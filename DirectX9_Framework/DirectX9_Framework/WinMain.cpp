@@ -8,19 +8,24 @@
 
 #include "GameInfo_Loader.h"
 #include "SystemClass.h"
+#include "D3D_SpriteManager.h"
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline, int iCmdshow)
 {
-    std::shared_ptr<Window::stWinInfo> WIN_INFO(new Window::stWinInfo);    
+	Window::shrdWININFO WIN_INFO(new Window::stWinInfo);
+	Resources::VecSpriteInfo SPRITES_INFO;
 
     try{
 
         CGameInfo_Loader::getInstancePtr()->saveTimeToXMLFile();
 
         CGameInfo_Loader::getInstancePtr()->loadWindowAppName(WIN_INFO->wcsAppName);
-        CGameInfo_Loader::getInstancePtr()->loadWindowSize("window_4-to-3", WIN_INFO.get());
-		//CGameInfo_Loader::getInstancePtr()->loadWindowSize("FULL SCREEN", WIN_INFO.get());
+        //CGameInfo_Loader::getInstancePtr()->loadWindowSize("window_4-to-3", WIN_INFO);
+		CGameInfo_Loader::getInstancePtr()->loadWindowSize("FULL SCREEN", WIN_INFO);
+
+		CGameInfo_Loader::getInstancePtr()->loadSpriteInfo(WIN_INFO, SPRITES_INFO);
+		CD3D_SpriteManager::getInstancePtr()->loadSpriteInfoFromVector(SPRITES_INFO);		
 
         CSystemClass::getInstancePtr()->initialize(WIN_INFO);
         CSystemClass::getInstancePtr()->messageLoop();

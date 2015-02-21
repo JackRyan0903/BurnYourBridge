@@ -41,24 +41,39 @@ public:
 	//		1. FULL SCREEN : 풀스크린 모드
     //      2. window_4-to-3 : 800 x 600
     //================================================================================//
-    void loadWindowSize(const std::string &windowType, Window::stWinInfo *winInfo);
+	void loadWindowSize(const std::string &windowType, Window::shrdWININFO winInfo);
 
-    /*void test(void)
-    {
-    TiXmlDocument doc;
-    doc.LoadFile(PATH_XML::GAME_INFO.c_str());
+	//================================================================================//
+	//  @멤버함수
+	//  @설명 : 스프라이트 정보들을 XML로 부터 불러옴	
+	//================================================================================//
+	void loadSpriteInfo(const Window::shrdWININFO &winInfo, Resources::VecSpriteInfo &vecSpriteInfo);
 
-    TiXmlElement *ele = new TiXmlElement("Windows");
-    doc.RootElement()->LinkEndChild(ele);
+	/*void test(void)
+	{
+		TiXmlDocument doc;
+		doc.LoadFile(PATH_XML::GAME_INFO.c_str());
 
-    TiXmlElement *subEle = new TiXmlElement("window_4-to-3");
-    subEle->SetAttribute("screen_size_X", 800);
-    subEle->SetAttribute("screen_size_Y", 600);
+		TiXmlElement *ele = new TiXmlElement("Resources");
+		doc.RootElement()->LinkEndChild(ele);
 
-    ele->LinkEndChild(subEle);
+		TiXmlElement *subEle = new TiXmlElement("Sprites");
+		ele->LinkEndChild(subEle);
 
-    doc.SaveFile(PATH_XML::GAME_INFO.c_str());
-    }*/
+
+		TiXmlElement *subEle2 = new TiXmlElement("testUI");
+		subEle2->SetAttribute("spriteName", "test");
+		subEle2->SetAttribute("fileName", "test.png");
+		subEle2->SetAttribute("posX", 100);
+		subEle2->SetAttribute("posY", 100);
+		subEle2->SetAttribute("width", 100);
+		subEle2->SetAttribute("height", 100);
+
+		subEle->LinkEndChild(subEle2);
+		
+
+		doc.SaveFile(PATH_XML::GAME_INFO.c_str());
+	}*/
     
 public:
     CGameInfo_Loader()  {}
@@ -102,4 +117,15 @@ private:
     //		1. XML File Get Damaged : XML파일내에 LatestReleasingTime라는 엘레먼트가 없을 시 발생.
     //================================================================================//
     void _saveLatestReleasingTime(const SYSTEMTIME &systemTime);
+
+
+	//================================================================================//
+	//  @멤버함수
+	//  @접근지정 : private
+	//  @설명 : 파라미터로 전달받은 attribute의 포인터를 다음 attribute의 포인터 값으로 변경하고 이것을 반환.
+	//	@예외   
+	//		1. Sprite's info is inaccurate, Check "File Name" File : XML 파일 내의 attribute의 이름이 정확하지 않을 시 발생.
+	//================================================================================//
+	TiXmlAttribute* _moveNextAttribute(TiXmlAttribute* pAttribute);
+
 };
